@@ -221,6 +221,55 @@ function addBackdrop(type, backgoundPath) {
 	}
 }
 
+async function displaySlider() {
+	const { results } = await getTMDBData('movie/now_playing');
+
+	results.forEach((result) => {
+		const div = document.createElement('div');
+		div.classList.add('swiper-slide');
+
+		div.innerHTML = `
+		<a href="movie-details.html?id=${result.id}">
+		<img src="https://image.tmdb.org/t/p/w500${result.poster_path}" alt="${
+			result.title
+		}" />
+		</a>
+		<h4 class="swiper-rating>
+		<i class="fas fa-star text-secondary"></i> ${result.vote_average.toFixed(
+			1
+		)} / 10
+		</h4>`;
+
+		document.querySelector('.swiper-wrapper').appendChild(div);
+
+		initSwiper();
+	});
+}
+
+function initSwiper() {
+	const swiper = new Swiper('.swiper', {
+		slidesPerView: 1,
+		spaceBetween: 30,
+		freeMode: true,
+		loop: true,
+		autoplay: {
+			delay: 4000,
+			disableOnInteraction: false,
+		},
+		breakpoints: {
+			500: {
+				slidesPerView: 2,
+			},
+			750: {
+				slidesPerView: 3,
+			},
+			1200: {
+				slidesPerView: 4,
+			},
+		},
+	});
+}
+
 async function getTMDBData(endpoint) {
 	const API_KEY = '894794e35b50d506b0c2602faad70632';
 	const API_URL = 'https://api.themoviedb.org/3/';
@@ -259,6 +308,7 @@ function init() {
 	switch (globaState.currentPage) {
 		case '/':
 		case '/index.html':
+			displaySlider();
 			displayPopularMovies();
 			break;
 		case '/shows.html':
