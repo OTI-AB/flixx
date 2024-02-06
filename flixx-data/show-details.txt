@@ -1,0 +1,97 @@
+{adult: false, backdrop_path: '/gMMnf8VRg3Z98WaFmOLr9Jk8pIs.jpg', created_by: Array(4), episode_run_time: Array(1), first_air_date: '2015-09-08', …}
+adult
+: 
+false
+backdrop_path
+: 
+"/gMMnf8VRg3Z98WaFmOLr9Jk8pIs.jpg"
+created_by
+: 
+(4) [{…}, {…}, {…}, {…}]
+episode_run_time
+: 
+[41]
+first_air_date
+: 
+"2015-09-08"
+genres
+: 
+(2) [{…}, {…}]
+homepage
+: 
+"https://www.cbs.com/shows/the-late-show-with-stephen-colbert"
+id
+: 
+63770
+in_production
+: 
+true
+languages
+: 
+['en']
+last_air_date
+: 
+"2024-02-05"
+last_episode_to_air
+: 
+{id: 5119914, name: '2/5/24 (Elizabeth Warren, Usama Siddiquee)', overview: 'Stephen welcomes Senator Elizabeth Warren and comic Usama Siddiquee.', vote_average: 0, vote_count: 0, …}
+name
+: 
+"The Late Show with Stephen Colbert"
+networks
+: 
+[{…}]
+next_episode_to_air
+: 
+{id: 5119916, name: "2/6/24 (Joy-Ann Reid, A'ja Wilson)", overview: '', vote_average: 0, vote_count: 0, …}
+number_of_episodes
+: 
+1467
+number_of_seasons
+: 
+9
+origin_country
+: 
+['US']
+original_language
+: 
+"en"
+original_name
+: 
+"The Late Show with Stephen Colbert"
+overview
+: 
+"Stephen Colbert brings his signature satire and comedy to The Late Show with Stephen Colbert, the #1 show in late night, where he talks with an eclectic mix of guests about what is new and relevant in the worlds of politics, entertainment, business, music, technology, and more. Featuring bandleader Jon Batiste with his band Stay Human, the Emmy Award-nominated show is broadcast from the historic Ed Sullivan Theater. Stephen Colbert, Chris Licht, Tom Purcell, and Jon Stewart are executive producers. Barry Julien and Denise Rehrig serve as co-executive producers."
+popularity
+: 
+3439.929
+poster_path
+: 
+"/9jkThAGYj2yp8jsS6Nriy5mzKFT.jpg"
+production_companies
+: 
+(2) [{…}, {…}]
+production_countries
+: 
+[{…}]
+seasons
+: 
+(9) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+spoken_languages
+: 
+[{…}]
+status
+: 
+"Returning Series"
+tagline
+: 
+""
+type
+: 
+"Talk Show"
+vote_average
+: 
+6.5
+vote_count
+: 
+230
