@@ -239,11 +239,77 @@ async function search() {
 	globalState.search.term = urlParams.get('search-term');
 
 	if (globalState.search.term !== '' && globalState.search.term !== null) {
-		const results = await searchAPIData();
-		console.log(results.valueOf());
+		const { results, total_pages, page } = await searchAPIData();
+		if (results.length === 0) {
+			showAlert(
+				'Sorry, no movies matching that search were found',
+				'alert-warning'
+			);
+			return;
+		}
+
+		displaySearchResults(results);
 	} else {
-		showAlert('You must include a search term');
+		showAlert('You must include a search term', 'alert-error');
 	}
+}
+
+async function displaySearchResults(results) {
+	results.forEach((result) => {
+		const searchType = globalState.search.type;
+		const div = document.createElement('div');
+		div.classList.add('card');
+		div.innerHTML = `
+		<a href="${searchType}-details.html?id=${result.id}">
+		
+		${
+			result.poster_path
+				? `<img src="https://image.tmdb.org/t/p/w500/${
+						result.poster_path
+				  } "class="card-img-top"  alt="${
+						searchType === 'movie' ? result.title : result.name
+				  }"/>`
+				: `<img src="../images/no-image.jpg" class="card-img-top" alt="${
+						searchType === 'movie' ? result.title : result.name
+				  }"/>`
+		}
+		</a>
+		<div class="card-body">
+			<h5 class="card-title">${
+				searchType === 'movie' ? result.title : result.name
+			}</h5>
+			<p class="card-text">
+				<small class="text-muted">Released On: ${
+					searchType === 'movie' ? result.release_date : result.first_air_date
+				}</small>
+			</p>
+		</div>
+	</div>`;
+		document.querySelector('#search-results').appendChild(div);
+	});
+}
+
+// checkRadio();
+
+function checkRadio() {
+	const searchType = globalState.search.type;
+
+	const div = document.querySelector('.search-radio');
+	if (searchType === 'movie') {
+		div.innerHTML = `
+		<input type="radio" id="movie" name="type" value="movie" checked />
+			<label for="movies">Movies</label>
+		<input type="radio" id="tv" name="type" value="tv"/>
+			<label for="shows">TV Shows</label>
+		`;
+	} else {
+		div.innerHTML = `<input type="radio" id="movie" name="type" value="movie" />
+		<label for="movies">Movies</label>
+	<input type="radio" id="tv" name="type" value="tv" checked/>
+		<label for="shows">TV Shows</label>`;
+	}
+
+	document.querySelector('.search-form').appendChild(div);
 }
 
 async function displaySlider() {
