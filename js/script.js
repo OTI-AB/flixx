@@ -1,5 +1,15 @@
-const globaState = {
+const globalState = {
 	currentPage: window.location.pathname,
+	search: {
+		term: '',
+		type: '',
+		page: 1,
+		totalPages: 1,
+	},
+	api: {
+		apiKey: '894794e35b50d506b0c2602faad70632',
+		apiUrl: 'https://api.themoviedb.org/3/',
+	},
 };
 
 async function displayPopularMovies() {
@@ -221,6 +231,21 @@ function addBackdrop(type, backgoundPath) {
 	}
 }
 
+async function search() {
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+
+	globalState.search.type = urlParams.get('type');
+	globalState.search.term = urlParams.get('search-term');
+
+	if (globalState.search.term !== '' && globalState.search.term !== null) {
+		const results = await searchAPIData();
+		console.log(results.valueOf());
+	} else {
+		showAlert('You must include a search term');
+	}
+}
+
 async function displaySlider() {
 	const { results } = await getTMDBData('movie/now_playing');
 
@@ -270,9 +295,43 @@ function initSwiper() {
 	});
 }
 
+async function searchAPIData() {
+	const API_KEY = globalState.api.apiKey;
+	const API_URL = globalState.api.apiUrl;
+
+	showSpinner();
+
+	const response = await fetch(
+		`${API_URL}search/${globalState.search.type}?query=${globalState.search.term}&api_key=${API_KEY}&language=en-US`
+	);
+
+	const data = await response.json();
+
+	hideSpinner();
+
+	return data;
+}
+
+function showSpinner() {
+	document.querySelector('.spinner').style.display = 'block';
+}
+
+function hideSpinner() {
+	document.querySelector('.spinner').style.display = 'none';
+}
+
+function highlightActiveLink() {
+	const links = document.querySelectorAll('.nav-link');
+	links.forEach((link) => {
+		if (link.getAttribute('href') === globalState.currentPage) {
+			link.classList.add('active');
+		}
+	});
+}
+
 async function getTMDBData(endpoint) {
-	const API_KEY = '894794e35b50d506b0c2602faad70632';
-	const API_URL = 'https://api.themoviedb.org/3/';
+	const API_KEY = globalState.api.apiKey;
+	const API_URL = globalState.api.apiUrl;
 
 	const response = await fetch(
 		`${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`
@@ -298,14 +357,23 @@ function hideSpinner() {
 function highlightActiveLink() {
 	const links = document.querySelectorAll('.nav-link');
 	links.forEach((link) => {
-		if (link.getAttribute('href') === globaState.currentPage) {
+		if (link.getAttribute('href') === globalState.currentPage) {
 			link.classList.add('active');
 		}
 	});
 }
 
+function showAlert(message, className) {
+	const alertEl = document.createElement('div');
+	alertEl.classList.add('alert', className);
+	alertEl.appendChild(document.createTextNode(message));
+	document.querySelector('#alert').appendChild(alertEl);
+
+	setTimeout(() => alertEl.remove(), 3000);
+}
+
 function init() {
-	switch (globaState.currentPage) {
+	switch (globalState.currentPage) {
 		case '/':
 		case '/index.html':
 			displaySlider();
@@ -321,7 +389,7 @@ function init() {
 			displayShowDetails();
 			break;
 		case '/search.html':
-			console.log('Search Page');
+			search();
 			break;
 	}
 	highlightActiveLink();
