@@ -5,6 +5,7 @@ const globalState = {
 		type: '',
 		page: 1,
 		totalPages: 1,
+		totalResults: 0,
 	},
 	api: {
 		apiKey: '894794e35b50d506b0c2602faad70632',
@@ -159,9 +160,9 @@ async function displayShowDetails() {
 			.map((language) => `<li>${language.name}</li>`)
 			.join('')}
 		<li>
-			<span class="text-secondary">Last Episode To Air:</span> ${
+			<span class="text-secondary">Last Episode :</span> ${
 				show.last_episode_to_air.name
-			}
+			} aired on ${show.last_air_date}
 		</li>
 		<li><span class="text-secondary">Status:</span> ${show.status}</li>
 	</ul>
@@ -239,7 +240,12 @@ async function search() {
 	globalState.search.term = urlParams.get('search-term');
 
 	if (globalState.search.term !== '' && globalState.search.term !== null) {
-		const { results, total_pages, page } = await searchAPIData();
+		const { results, total_pages, page, total_results } = await searchAPIData();
+
+		globalState.search.page = page;
+		globalState.search.totalPages = total_pages;
+		globalState.search.totalResults = total_results;
+
 		if (results.length === 0) {
 			showAlert(
 				'Sorry, no movies matching that search were found',
@@ -255,6 +261,10 @@ async function search() {
 }
 
 async function displaySearchResults(results) {
+	document.querySelector('#search-results').innerHTML = '';
+	document.querySelector('#search-results-heading').innerHTML = '';
+	document.querySelector('#pagination').innerHTML = '';
+
 	results.forEach((result) => {
 		const searchType = globalState.search.type;
 		const div = document.createElement('div');
@@ -285,11 +295,50 @@ async function displaySearchResults(results) {
 			</p>
 		</div>
 	</div>`;
+
+		document.querySelector('#search-results-heading').innerHTML = `
+		<h2>${results.length} of ${globalState.search.totalResults}  results for "${globalState.search.term}"</h2>`;
+
 		document.querySelector('#search-results').appendChild(div);
 	});
+
+	displayPagination();
 }
 
 // checkRadio();
+
+function displayPagination() {
+	const div = document.createElement('div');
+	div.classList.add('pagination');
+
+	div.innerHTML = `
+	<button class="btn btn-primary" id="prev">Prev</button>
+	<button class="btn btn-primary" id="next">Next</button>
+	<div class="page-counter">Page ${globalState.search.page} of ${globalState.search.totalPages} pages</div>`;
+
+	document.querySelector('#pagination').appendChild(div);
+
+	if (globalState.search.page === 1) {
+		document.querySelector('#prev').disabled = true;
+	}
+	if (globalState.search.page === globalState.search.totalPages) {
+		document.querySelector('#next').disabled = true;
+	}
+	document
+		.querySelector('#prev')
+		.addEventListener('click', async function displayPrev() {
+			globalState.search.page--;
+			const { results, total_pages } = await searchAPIData('movie/popular');
+			displaySearchResults(results);
+		});
+	document
+		.querySelector('#next')
+		.addEventListener('click', async function displayNext() {
+			globalState.search.page++;
+			const { results, total_pages } = await searchAPIData('movie/popular');
+			displaySearchResults(results);
+		});
+}
 
 function checkRadio() {
 	const searchType = globalState.search.type;
@@ -368,7 +417,7 @@ async function searchAPIData() {
 	showSpinner();
 
 	const response = await fetch(
-		`${API_URL}search/${globalState.search.type}?query=${globalState.search.term}&api_key=${API_KEY}&language=en-US`
+		`${API_URL}search/${globalState.search.type}?query=${globalState.search.term}&api_key=${API_KEY}&language=en-US&page=${globalState.search.page}`
 	);
 
 	const data = await response.json();
